@@ -1,0 +1,39 @@
+<project name="jarsBuilder" default="all">
+    <property name="src.dir" value="src"/>
+    <property name="bin.dir" value="jar-classes"/>
+    <property name="jars.dir" value="jars"/>
+
+    <property name="args4j.path" value="lib/args4j-2.0.21.jar"/>
+    <property name="commons.lang3.path" value="lib/commons-lang3-3.1.jar"/>
+    <property name="antlr.path" value="lib/antlr-runtime-4.6.jar"/>
+    
+    <property name="translator.main" value="parser/Project"/>
+    <property name="translator.jar" value="translator.jar"/>
+    
+    <property name="debug" value="true"/>
+    
+    <target name="all"
+            depends="translator-jar">
+    </target>
+
+    <target name="translator-jar">
+        <mkdir dir="${bin.dir}"/>
+        <javac srcdir="${src.dir}"
+               destdir="${bin.dir}"
+               classpath="${commons.lang3.path}:${args4j.path}:${antlr.path}"
+               includeantruntime="false"
+               debug="${debug}">
+            <include name="${translator.main}.java"/>
+        </javac>
+        <jar destfile="${jars.dir}/${translator.jar}"
+             basedir="${bin.dir}">
+            <manifest>
+                <attribute name="Main-Class" value="${translator.main}"/>
+            </manifest>
+            <zipfileset src="${commons.lang3.path}" excludes="META-INF/*.SF"/>
+            <zipfileset src="${args4j.path}" excludes="meta-inf/*.sf"/>
+            <zipfileset src="${antlr.path}" excludes="meta-inf/*.sf"/>
+        </jar>
+        <delete dir="${bin.dir}"/>
+    </target>
+</project>
